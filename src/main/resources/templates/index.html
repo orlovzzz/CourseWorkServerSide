@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jewelry Page</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+         nav {
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            margin-left: 20px;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .new-order {
+            padding: 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <h1>Jewelry</h1>
+        <nav>
+            <a href="/client/orders">All Orders</a>
+        </nav>
+    </div>
+</header>
+
+<div class="container">
+    <div class="new-order">
+        <p th:text="${state}"></p>
+        <h2>New Order</h2>
+        <form action="/client" method="post">
+            <label for="orderInfo">Order Information:</label>
+            <input type="text" id="orderInfo" name="orderInfo" placeholder="Enter order information" required>
+            <button type="submit">Create Order</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

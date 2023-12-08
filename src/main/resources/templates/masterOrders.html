@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Orders</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+         nav {
+            text-align: right;
+            margin-top: 20px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+            margin-left: 20px;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .client-details {
+            padding: 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+            border-radius: 10px;
+            margin-top: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .input-group {
+          margin-bottom: 15px;
+        }
+
+        input {
+          width: 100%;
+          padding: 8px;
+          box-sizing: border-box;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        .client-block {
+            margin-top: 20px;
+        }
+
+        .show-orders-button {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        #password {
+          width: 150px
+        }
+        .show-orders-button {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bolder
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <h1>Master Orders</h1>
+    </div>
+</header>
+
+<div th:each="order : ${orders}" th:if="${order} != null" class="client-block">
+    <div class="client-details">
+        <h2 th:text="'Order ID: ' + ${order.id}"></h2>
+        <label>Client ID:</label>
+        <p th:text="${order.client.id}"></p><br>
+        <label>Name:</label>
+        <p th:text="${order.client.name}"></p><br>
+        <label>Surname:</label>
+        <p th:text="${order.client.surname}"></p><br>
+        <label>Order info:</label>
+        <p th:text="${order.orderInfo}"></p><br>
+        <label>Order state:</label>
+        <p th:text="${order.orderState}"></p><br>
+        <div class="input-group">
+            <form action="/employee/master" method="post">
+                <input type="hidden" name="orderId" th:value="${order.id}" />
+                <button type="submit" class="show-orders-button">Order is ready</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+
+</body>
+</html>

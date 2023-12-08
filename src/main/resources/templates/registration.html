@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Page</title>
+    <style>
+    body {
+      background-color: #dddddd;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      background-color: #ffffff;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    h2 {
+      margin-top: 0;
+      text-align: center;
+      width: 100%;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+
+    .registration-link {
+      width: 100%;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .block {
+      width: 48%;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="block">
+        <h2>User Registration</h2>
+        <form action="/registration/user" method="post">
+            <div class="input-group">
+                <label for="nameUser">Name:</label>
+                <input type="text" id="nameUser" name="name" placeholder="Enter your name" required>
+            </div>
+            <div class="input-group">
+                <label for="surnameUser">Surname:</label>
+                <input type="text" id="surnameUser" name="surname" placeholder="Enter your surname" required>
+            </div>
+            <div class="input-group">
+                <label for="loginUser">Login:</label>
+                <input type="text" id="loginUser" name="login" placeholder="Choose a login" required>
+            </div>
+            <div class="input-group">
+                <label for="passwordUser">Password:</label>
+                <input type="password" id="passwordUser" name="password" placeholder="Choose a password" required>
+            </div>
+            <button type="submit">Registration</button>
+            <p th:text="${errorUser}"></p>
+        </form>
+    </div>
+
+    <div class="block">
+        <h2>Employee Registration</h2>
+        <form action="/registration/employee" method="post">
+            <div class="input-group">
+                <label for="nameEmployee">Name:</label>
+                <input type="text" id="nameEmployee" name="name" placeholder="Enter your name" required>
+            </div>
+            <div class="input-group">
+                <label for="surnameEmployee">Surname:</label>
+                <input type="text" id="surnameEmployee" name="surname" placeholder="Enter your surname" required>
+            </div>
+            <div class="input-group">
+                <label for="position">Position:</label>
+                <select id="position" name="position" required>
+                    <option value="Administrator">Administrator</option>
+                    <option value="Master">Master</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="loginUser">Login:</label>
+                <input type="text" id="login" name="login" placeholder="Choose a login" required>
+            </div>
+            <div class="input-group">
+                <label for="passwordEmployee">Password:</label>
+                <input type="password" id="passwordEmployee" name="password" placeholder="Enter your password" required>
+            </div>
+            <div class="input-group">
+                <label for="employeePassword">Employee Password:</label>
+                <input type="password" id="employeePassword" name="employeePassword" pattern="\d*" placeholder="Enter your employee password" required>
+            </div>
+            <p th:text="${errorEmployee}"></p>
+            <button type="submit">Registration</button>
+        </form>
+    </div>
+</div>
+
+<div class="registration-link">
+    <p>Already have an account? <a href="/">Login</a>.</p>
+</div>
+
+</body>
+</html>
