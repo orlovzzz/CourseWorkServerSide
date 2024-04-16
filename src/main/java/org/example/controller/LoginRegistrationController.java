@@ -1,5 +1,7 @@
 package org.example.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.dto.*;
 import org.example.service.EmailService;
 import org.example.service.LoginRegistrationService;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
+@Tag(name = "LoginRegistrationController", description = "Login or registration user or employee")
 public class LoginRegistrationController {
 
     @Autowired
@@ -18,6 +21,7 @@ public class LoginRegistrationController {
     private EmailService emailService;
 
     @PostMapping("/registration/client")
+    @Operation(summary = "Client registration")
     public ResponseEntity<SuccessMessageDTO> registrationUser(@RequestBody AccountRegistrationClientDTO accountReg) {
         SuccessMessageDTO successMessageDTO = service.registrationUser(accountReg);
         if (successMessageDTO.isSuccess()) {
@@ -27,6 +31,7 @@ public class LoginRegistrationController {
     }
 
     @PostMapping("/registration/employee")
+    @Operation(summary = "Employee registration")
     public ResponseEntity<SuccessMessageDTO> registrationEmployee(@RequestBody AccountRegistrationEmployeeDTO employeeReg) {
         SuccessMessageDTO successMessageDTO = service.registrationEmployee(employeeReg);
         if (successMessageDTO.isSuccess()) {
@@ -36,6 +41,7 @@ public class LoginRegistrationController {
     }
 
     @PostMapping("/login/client")
+    @Operation(summary = "Client login")
     public ResponseEntity<SuccessMessageDTO> loginUser(@RequestBody AccountClientLoginDTO accountClient) {
         SuccessMessageDTO successMessageDTO = service.loginUser(accountClient);
         if (successMessageDTO.isSuccess()) {
@@ -45,6 +51,7 @@ public class LoginRegistrationController {
     }
 
     @PostMapping("/login/employee")
+    @Operation(summary = "Employee login")
     public ResponseEntity<SuccessMessageEmployeeDTO> loginEmployee(@RequestBody AccountEmployeeLoginDTO accountEmployee) {
         SuccessMessageEmployeeDTO successMessageEmployeeDTO = service.loginEmployee(accountEmployee);
         if (successMessageEmployeeDTO.isSuccess()) {

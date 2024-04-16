@@ -1,5 +1,7 @@
 package org.example.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.example.dto.ClientOrderDTO;
 import org.example.dto.OrderDTO;
 import org.example.dto.SuccessMessageDTO;
@@ -14,17 +16,20 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/client")
+@Tag(name = "UserController", description = "Interacting with user data")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
     @PostMapping("")
+    @Operation(summary = "Make an order")
     public ResponseEntity<SuccessMessageDTO> doOrder(@RequestBody ClientOrderDTO orderDTO) {
         return new ResponseEntity<>(userService.doOrder(orderDTO), HttpStatus.OK);
     }
 
     @GetMapping("")
+    @Operation(summary = "Get all client orders")
     public ResponseEntity<List<OrderDTO>> getOrders(@RequestParam("id") String id) {
         return new ResponseEntity<>(userService.getAllOrders(id), HttpStatus.OK);
     }
