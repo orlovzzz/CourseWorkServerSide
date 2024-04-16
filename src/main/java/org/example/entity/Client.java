@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -15,10 +17,12 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne()
+    @OneToOne()
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "id_account")
     private Account account;
 
+    private String email;
     private String name;
 
     private String surname;
@@ -28,4 +32,10 @@ public class Client {
         this.surname = surname;
     }
 
+    public Client(String name, String surname, String email, Account account) {
+        this.name = name;
+        this.email = email;
+        this.surname = surname;
+        this.account = account;
+    }
 }

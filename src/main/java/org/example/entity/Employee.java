@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -17,7 +19,8 @@ public class Employee {
 
     private String position;
 
-    @ManyToOne()
+    @OneToOne()
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "id_account")
     private Account account;
 
@@ -32,6 +35,13 @@ public class Employee {
         this.name = name;
         this.surname = surname;
         this.position = position;
+    }
+
+    public Employee(String name, String surname, String position, Account account) {
+        this.name = name;
+        this.surname = surname;
+        this.position = position;
+        this.account = account;
     }
 
 }

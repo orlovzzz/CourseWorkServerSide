@@ -1,81 +1,54 @@
 package org.example.controller;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import org.example.entity.Client;
+import org.example.dto.*;
 import org.example.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Controller
-@RequestMapping("/employee")
 public class EmployeeController {
 
     @Autowired
     private EmployeeService employeeService;
 
-    @GetMapping("")
-    public String proxyEmployee(HttpServletRequest request) {
-        List<Cookie> cookies = Arrays.stream(request.getCookies()).toList();
-        if (employeeService.getPosition(employeeService.getIDFromCookie(cookies))) {
-            return "redirect:/employee/admin";
-        }
-        return "redirect:/employee/master";
-    }
-
-    @GetMapping("/admin")
-    public String getAdminPanel(Model model) {
-        List<Client> clients = employeeService.getAllClients();
-        model.addAttribute("clients", clients);
-        return "admin";
-    }
-
-    @GetMapping("/admin/{id}")
-    public String getClientOrders(Model model, @PathVariable("id") String id) {
-        System.out.println(id);
-        model.addAttribute("orders", employeeService.getOrdersByClientID(id));
-        return "adminClientOrders";
-    }
-
-    @GetMapping("/admin/delete/{clientID}/{id}")
-    public String deleteOrder(@PathVariable("clientID") String clientID, @PathVariable("id") String id, HttpServletRequest request) {
-        employeeService.deleteOrderByID(id);
-        return "redirect:/employee/admin/" + clientID;
-    }
-
     @GetMapping("/master")
-    public String getMasterPage(Model model) {
-        model.addAttribute("orders", employeeService.getAllOrders());
-        return "master";
-    }
-
-    @PostMapping("/master/orders")
-    public String setMasterToOrder(HttpServletRequest request,
-                                   @RequestParam("orderId") String orderID, @RequestParam("price") String price) {
-        List<Cookie> cookies = Arrays.stream(request.getCookies()).toList();
-        String masterID = employeeService.getIDFromCookie(cookies);
-        System.out.println(masterID);
-        employeeService.addMasterToOrder(orderID, price, masterID);
-        return "redirect:/employee/master";
-    }
-
-    @GetMapping("/master/orders")
-    public String getMasterOrders(HttpServletRequest request, Model model) {
-        List<Cookie> cookies = Arrays.stream(request.getCookies()).toList();
-        String masterID = employeeService.getIDFromCookie(cookies);
-        model.addAttribute("orders", employeeService.getMasterOrders(masterID));
-        return "masterOrders";
+    public ResponseEntity<List<AllOrdersForMasterDTO>> getAllOrdersWithoutMaster() {
+        return new ResponseEntity<>(employeeService.getAllOrdersWithoutMaster(), HttpStatus.OK);
     }
 
     @PostMapping("/master")
-    public String orderReady(@RequestParam("orderId") String orderID) {
-        employeeService.orderReady(orderID);
-        return "redirect:/employee/master/orders";
+    public ResponseEntity<SuccessMessageDTO> setMasterToOrder(@RequestBody SetMasterDTO setMaster) {
+        return new ResponseEntity<>(employeeService.setMasterToOrder(setMaster), HttpStatus.OK);
     }
 
+    @GetMapping("/master/orders")
+    public ResponseEntity<List<AllOrdersForMasterDTO>> getAllMasterOrders(@RequestParam("masterId") String id) {
+        return new ResponseEntity<>(employeeService.getAllMasterOrders(id), HttpStatus.OK);
+    }
+
+    @PostMapping("/master/orders")
+    public ResponseEntity<SuccessMessageDTO> setCompleteStateToOrder(@RequestParam("orderId") String id) {
+        return new ResponseEntity<>(employeeService.setCompleteStateToOrder(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/admin")
+    public ResponseEntity<List<ClientsForAdminPanelDTO>> getAllClients() {
+        return new ResponseEntity<>(employeeService.getAllClients(), HttpStatus.OK);
+    }
+
+    @GetMapping("/getOrders")
+    public ResponseEntity<List<AdminOrderDTO>> getAllOrdersByClientId(@RequestParam("clientId") String id) {
+        return new ResponseEntity<>(employeeService.getOrdersByClientId(id), HttpStatus.OK);
+    }
+
+    @PostMapping("/getOrders")
+    public ResponseEntity deleteOrder(@RequestParam("orderId") String id, @RequestParam("adminId") String adminId) {
+        employeeService.deleteOrder(id, adminId);
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }

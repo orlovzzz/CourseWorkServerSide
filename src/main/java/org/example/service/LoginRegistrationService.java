@@ -1,17 +1,22 @@
 package org.example.service;
 
+import org.example.dto.*;
 import org.example.entity.Account;
 import org.example.entity.Client;
 import org.example.entity.Employee;
-import org.example.entity.Success;
 import org.example.repository.AccountRepository;
 import org.example.repository.ClientRepository;
 import org.example.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Service
 public class LoginRegistrationService {
+    private static final String EMAIL_REGEX = "@[a-z]*\\.";
+    private static final Pattern pattern = Pattern.compile(EMAIL_REGEX);
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
@@ -19,56 +24,67 @@ public class LoginRegistrationService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    public String registrationUser(Client client, Account account) {
-        if (accountRepository.findByLogin(account.getLogin()) != null) {
-            return "Account with login " + account.getLogin() + " already exists";
+    public SuccessMessageDTO registrationUser(AccountRegistrationClientDTO clientRegDTO) {
+        Account account = accountRepository.findByLogin(clientRegDTO.getLogin());
+        if (account != null) {
+            return new SuccessMessageDTO(false, "Account already exists");
         }
-        client.setAccount(account);
-        accountRepository.save(account);
-        clientRepository.save(client);
-        return null;
+        Matcher matcher = pattern.matcher(clientRegDTO.getEmail());
+        if (!matcher.find()) {
+            return new SuccessMessageDTO(false, "Wrong email");
+        }
+        account = accountRepository.save(new Account(clientRegDTO.getLogin(), clientRegDTO.getPassword(), false));
+        clientRepository.save(new Client(clientRegDTO.getName(), clientRegDTO.getSurname(), clientRegDTO.getEmail(), account));
+        return new SuccessMessageDTO(true, "");
     }
 
-    public String registrationEmployee(Employee employee, Account account, String employeePassword) {
-        if (accountRepository.findByLogin(account.getLogin()) != null) {
-            return "Account with login " + account.getLogin() + " already exists";
+    public SuccessMessageDTO registrationEmployee(AccountRegistrationEmployeeDTO employeeDTO) {
+        Account account = accountRepository.findByLogin(employeeDTO.getLogin());
+        if (account != null) {
+            return new SuccessMessageDTO(false,  "Account already exists");
         }
-        if (!employeePassword.equals("1234")) {
-            return "Wrong employee`s password";
+        if (employeeDTO.getUniqueCode() != 1234) {
+            return new SuccessMessageDTO(false, "Wrong unique code");
         }
-        employee.setAccount(account);
-        accountRepository.save(account);
-        employeeRepository.save(employee);
-        return null;
+        account = accountRepository.save(new Account(employeeDTO.getLogin(), employeeDTO.getPassword(), true));
+        employeeRepository.save(new Employee(employeeDTO.getName(), employeeDTO.getSurname(), employeeDTO.getPosition(), account));
+        return new SuccessMessageDTO(true, "");
     }
 
-    public Success loginUser(Account account) {
-        if (accountRepository.findByLogin(account.getLogin()) == null) {
-            return new Success(false, "Account with login " + account.getLogin() + " not found");
+    public SuccessMessageDTO loginUser(AccountClientLoginDTO accountDTO) {
+        Account account = accountRepository.findByLogin(accountDTO.getLogin());
+        if (clientRepository.findByAccount(account) == null) {
+            return new SuccessMessageDTO(false, "Wrong login");
         }
-        if (!account.getPassword().equals(accountRepository.findByLogin(account.getLogin()).getPassword())) {
-            return new Success(false, "Wrong password");
+        if (account == null) {
+            return new SuccessMessageDTO(false, "User not found");
         }
-        account = accountRepository.findByLogin(account.getLogin());
-        return new Success(true, Integer.toString(clientRepository.findByAccount(account).getId()));
+        if (!accountDTO.getPassword().equals(account.getPassword())) {
+            return new SuccessMessageDTO(false, "Wrong password");
+        }
+        return new SuccessMessageDTO(true, String.valueOf(clientRepository.findByAccount(account).getId()));
     }
 
-    public Success loginEmployee(Account account, int uniqueCode, String position) {
-        if (accountRepository.findByLogin(account.getLogin()) == null) {
-            return new Success(false, "Account with login " + account.getLogin() + " not found");
+    public SuccessMessageEmployeeDTO loginEmployee(AccountEmployeeLoginDTO accountDTO) {
+        Account account = accountRepository.findByLogin(accountDTO.getLogin());
+        if (account == null) {
+            return new SuccessMessageEmployeeDTO(false, "Employee not found");
         }
-        if (!account.getPassword().equals(accountRepository.findByLogin(account.getLogin()).getPassword())) {
-            return new Success(false, "Wrong password");
+        if (!accountDTO.getPassword().equals(account.getPassword())) {
+            return new SuccessMessageEmployeeDTO(false, "Wrong password");
         }
-        account = accountRepository.findByLogin(account.getLogin());
         Employee employee = employeeRepository.findByAccount(account);
-        if (employee.getUniqueCode() != uniqueCode) {
-            return new Success(false, "Wrong unique code");
+        if (employee == null) {
+            return new SuccessMessageEmployeeDTO(false, "Wrong login");
         }
-        if (!employee.getPosition().equals(position)) {
-            return new Success(false, "You`re not " + position);
+        if (!employee.getPosition().equals(accountDTO.getPosition())) {
+            return new SuccessMessageEmployeeDTO(false, "You`re not " + accountDTO.getPosition());
         }
-        return new Success(true, Integer.toString(employee.getId()));
+        if (employee.getUniqueCode() != accountDTO.getUniqueCode()) {
+            return new SuccessMessageEmployeeDTO(false, "Wrong unique code");
+        }
+        return new SuccessMessageEmployeeDTO(
+                true, "", accountDTO.getPosition(), String.valueOf(employee.getId()));
     }
 
 }
