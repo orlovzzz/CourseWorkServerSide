@@ -10,7 +10,7 @@ import AdminPanel from './components/AdminPanel';
 import AdminOrders from './components/AdminOrders';
 
 function App() {
-  const apiUrl = 'http://localhost:8080';
+  const apiUrl = 'http://server:8080';
   return (
     <div className="App">
       <Router>
